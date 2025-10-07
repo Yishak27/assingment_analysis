@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8002:8002"
+    environment:
+      - DATABASE_URL=postgresql://student:secure_password@postgres:5432/academic_helper
+      - JWT_SECRET_KEY=SecW2025@2026!
+    depends_on:
+      - postgres
+
+  n8n:
+    image: n8nio/n8n
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_DEFAULT_TIMEOUT=60000
+
+  postgres:
+    image: ankane/pgvector
+    environment:
+      - POSTGRES_DB=academic_helper
+      - POSTGRES_USER=student
+      - POSTGRES_PASSWORD=secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
